@@ -1,0 +1,28 @@
+ARCHERY2/
+│
+├── HTML/
+│   ├── coaches.html
+│   ├── features.html
+│   ├── home.html
+│   ├── index.html
+│   ├── login.html
+│   └── pricing.html
+│
+├── not used/
+│   ├── oneshot_java_models.java
+│   └── oneshot_java_service.java
+│
+├── static/
+│   ├── CSS/
+│   │   ├── site.css
+│   │   └── style.css
+│   │
+│   └── JS/
+│       ├── app.js
+│       ├── config.js
+│       ├── pose-analyzer.js
+│       └── ui-controller.js
+│
+├── map_of_files.txt
+├── oneshot_api_spec.txt
+└── oneshot_readme.md

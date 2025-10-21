@@ -1,0 +1,725 @@
+openapi: 3.1.0
+info:
+  title: OneShot.pro API
+  description: AI-powered archery training platform API
+  version: 1.0.0
+  contact:
+    name: OneShot.pro Support
+    email: support@oneshot.pro
+
+servers:
+  - url: https://api.oneshot.pro/v1
+    description: Production server
+  - url: https://staging-api.oneshot.pro/v1
+    description: Staging server
+  - url: http://localhost:8080/api/v1
+    description: Local development
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Users
+    description: User profile management
+  - name: Sessions
+    description: Training session management
+  - name: Shots
+    description: Shot capture and analysis
+  - name: Coaches
+    description: Coach management and student interaction
+  - name: Clubs
+    description: Club and team management
+  - name: Analytics
+    description: Performance analytics and reports
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        tier:
+          type: string
+          enum: [free, pro, club]
+        profile:
+          $ref: '#/components/schemas/ArcherProfile'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ArcherProfile:
+      type: object
+      properties:
+        height:
+          type: number
+          format: float
+          minimum: 1.0
+          maximum: 2.5
+        drawLength:
+          type: number
+          format: float
+          minimum: 40
+          maximum: 80
+        bowType:
+          type: string
+          enum: [recurve, compound, traditional]
+        hand:
+          type: string
+          enum: [left, right]
+        dominantEye:
+          type: string
+          enum: [left, right]
+        experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+          description: Duration in seconds
+        shotCount:
+          type: integer
+        targetDistance:
+          type: number
+          format: float
+        environment:
+          $ref: '#/components/schemas/Environment'
+        summary:
+          $ref: '#/components/schemas/SessionSummary'
+
+    Environment:
+      type: object
+      properties:
+        location:
+          type: string
+          enum: [indoor, outdoor]
+        temperature:
+          type: number
+          format: float
+        windSpeed:
+          type: number
+          format: float
+        windDirection:
+          type: number
+          format: float
+        lighting:
+          type: string
+          enum: [low, medium, bright]
+
+    Shot:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sessionId:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        sequenceNumber:
+          type: integer
+        poseMetrics:
+          $ref: '#/components/schemas/PoseMetrics'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FormError'
+        arrow:
+          $ref: '#/components/schemas/ArrowData'
+        biosensors:
+          $ref: '#/components/schemas/BiosensorData'
+        feedback:
+          $ref: '#/components/schemas/Feedback'
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        videoUrl:
+          type: string
+          format: uri
+
+    PoseMetrics:
+      type: object
+      properties:
+        shoulderLineDeg:
+          type: number
+          format: float
+        bowElbowDeg:
+          type: number
+          format: float
+        drawAlignDeg:
+          type: number
+          format: float
+        headTiltDeg:
+          type: number
+          format: float
+        spineLeanDeg:
+          type: number
+          format: float
+        anchorRatio:
+          type: number
+          format: float
+        shoulderWidthPx:
+          type: number
+          format: float
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+
+    FormError:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [shoulderLine, bowElbow, drawAlign, headTilt, spineLean, anchor]
+        severity:
+          type: string
+          enum: [low, medium, high]
+        description:
+          type: string
+        value:
+          type: number
+          format: float
+        threshold:
+          type: number
+          format: float
+        recommendation:
+          type: string
+
+    ArrowData:
+      type: object
+      properties:
+        detected:
+          type: boolean
+        initialVelocity:
+          type: number
+          format: float
+          description: Estimated velocity in m/s
+        launchAngle:
+          type: number
+          format: float
+          description: Launch angle in degrees
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        targetScore:
+          type: integer
+          minimum: 0
+          maximum: 10
+
+    BiosensorData:
+      type: object
+      properties:
+        heartRate:
+          type: integer
+          description: BPM
+        respirationRate:
+          type: integer
+          description: Breaths per minute
+        tremor:
+          type: number
+          format: float
+          description: Tremor magnitude in Hz
+        timestamp:
+          type: string
+          format: date-time
+
+    Feedback:
+      type: object
+      properties:
+        text:
+          type: string
+        audioCode:
+          type: string
+        priority:
+          type: integer
+        type:
+          type: string
+          enum: [corrective, positive, neutral]
+
+    SessionSummary:
+      type: object
+      properties:
+        averageScore:
+          type: number
+          format: float
+        totalShots:
+          type: integer
+        errorDistribution:
+          type: object
+          additionalProperties:
+            type: integer
+        improvementTrend:
+          type: number
+          format: float
+        recommendations:
+          type: array
+          items:
+            type: string
+
+    Coach:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        certifications:
+          type: array
+          items:
+            type: string
+        specializations:
+          type: array
+          items:
+            type: string
+        students:
+          type: array
+          items:
+            type: string
+            format: uuid
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+
+    Club:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        adminId:
+          type: string
+          format: uuid
+        members:
+          type: array
+          items:
+            type: string
+            format: uuid
+        coaches:
+          type: array
+          items:
+            type: string
+            format: uuid
+        subscription:
+          $ref: '#/components/schemas/Subscription'
+
+    Subscription:
+      type: object
+      properties:
+        tier:
+          type: string
+          enum: [free, pro, club]
+        status:
+          type: string
+          enum: [active, cancelled, expired]
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        autoRenew:
+          type: boolean
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+
+paths:
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, name]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                name:
+                  type: string
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+        '401':
+          description: Invalid credentials
+
+  /users/{userId}:
+    get:
+      tags: [Users]
+      summary: Get user profile
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    put:
+      tags: [Users]
+      summary: Update user profile
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArcherProfile'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /sessions:
+    post:
+      tags: [Sessions]
+      summary: Start a new training session
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                targetDistance:
+                  type: number
+                environment:
+                  $ref: '#/components/schemas/Environment'
+      responses:
+        '201':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+
+    get:
+      tags: [Sessions]
+      summary: Get user's sessions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of sessions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Session'
+                  total:
+                    type: integer
+
+  /sessions/{sessionId}:
+    get:
+      tags: [Sessions]
+      summary: Get session details
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Session details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+
+    patch:
+      tags: [Sessions]
+      summary: Update session (e.g., end session)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                endTime:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Session updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+
+  /shots:
+    post:
+      tags: [Shots]
+      summary: Record a shot
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shot'
+      responses:
+        '201':
+          description: Shot recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shot'
+
+  /sessions/{sessionId}/shots:
+    get:
+      tags: [Shots]
+      summary: Get shots for a session
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of shots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Shot'
+
+  /analytics/progress:
+    get:
+      tags: [Analytics]
+      summary: Get user progress analytics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [week, month, year]
+            default: month
+      responses:
+        '200':
+          description: Progress analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  averageScore:
+                    type: number
+                  improvementRate:
+                    type: number
+                  totalShots:
+                    type: integer
+                  streak:
+                    type: integer
+                  errorTrends:
+                    type: object
+
+  /coaches/{coachId}/students:
+    get:
+      tags: [Coaches]
+      summary: Get coach's students
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: coachId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /clubs/{clubId}/dashboard:
+    get:
+      tags: [Clubs]
+      summary: Get club dashboard data
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Club dashboard
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  members:
+                    type: integer
+                  activeSessions:
+                    type: integer
+                  averageScore:
+                    type: number
+                  leaderboard:
+                    type: array
