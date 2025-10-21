@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OneShot.pro - AI Archery Training</title>
+    <meta name="description" content="OneShot.pro — AI-powered archery form analysis and training sessions with real-time feedback." />
+
+    <!-- Correct paths to your styles -->
+    <link rel="stylesheet" href="../static/CSS/style.css" />
+
+    <style>
+
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <h1 class="logo">OneShot.pro</h1>
+                <span class="tagline">Train Like You Only Got One Shot</span>
+            </div>
+            <nav class="nav" aria-label="Primary">
+                <a href="../HTML/home.html" class="nav-link active">Home</a>
+                <a href="../HTML/features.html" class="nav-link">Features</a>
+                <a href="../HTML/pricing.html" class="nav-link">Pricing</a>
+                <a href="../HTML/coaches.html" class="nav-link">Coaches</a>
+                <a href="../HTML/login.html" class="btn-login">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Setup Form -->
+        <div id="setupForm" class="setup-form">
+            <h2>Setup Your Profile</h2>
+            <p class="form-subtitle">Configure your archery settings to get personalized feedback</p>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="height">Height (meters)</label>
+                    <input type="number" id="height" value="1.70" step="0.01" min="1.0" max="2.5">
+                </div>
+
+                <div class="form-group">
+                    <label for="distance">Target Distance (meters)</label>
+                    <input type="number" id="distance" value="10" step="1" min="5" max="90">
+                </div>
+
+                <div class="form-group">
+                    <label for="drawLength">Draw Length (cm)</label>
+                    <input type="number" id="drawLength" value="60" step="1" min="40" max="80">
+                </div>
+
+                <div class="form-group">
+                    <label for="bowType">Bow Type</label>
+                    <select id="bowType">
+                        <option value="recurve">Recurve</option>
+                        <option value="compound">Compound</option>
+                        <option value="traditional">Traditional</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Bow Hand</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="hand" value="right" checked>
+                        <span>Right</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="hand" value="left">
+                        <span>Left</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Experience Level</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="experience" value="beginner" checked>
+                        <span>Beginner</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="experience" value="intermediate">
+                        <span>Intermediate</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="experience" value="advanced">
+                        <span>Advanced</span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="startSession()">
+                <span>Start Training Session</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+
+            <div class="tier-info">
+                <p><strong>Free Tier:</strong> 5 shots per session • Basic feedback • Community support</p>
+                <a href="pricing.html" class="upgrade-link">Upgrade to Pro for unlimited shots →</a>
+            </div>
+        </div>
+
+        <!-- Training Session View -->
+        <div id="videoContainer" class="video-container" hidden>
+            <div class="video-wrapper">
+                <video id="videoElement" autoplay playsinline></video>
+                <canvas id="canvasElement"></canvas>
+                
+                <div class="status-bar" role="status" aria-live="polite">
+                    <span id="statusText">Initializing camera...</span>
+                    <span id="statusRight" class="status-right"></span>
+                </div>
+
+                <div class="form-panel" id="formPanel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">Form Analysis</h3>
+                        <button class="panel-toggle" onclick="togglePanel()" aria-expanded="true" aria-controls="checksContainer">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path d="M6 8l4 4 4-4"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="panel-info" id="panelInfo"></div>
+                    <div id="checksContainer" class="checks-container"></div>
+                    <div class="shot-counter" id="shotCounter">
+                        Shots: <span id="shotCount">0</span> / <span id="shotLimit">5</span>
+                    </div>
+                </div>
+
+                <div class="watermark">OneShot.pro Beta • AI-Powered Form Analysis</div>
+            </div>
+
+            <div class="controls">
+                <button class="btn-control" onclick="captureShot()" id="shotButton">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                    </svg>
+                    <span>Capture Shot</span>
+                </button>
+                <button class="btn-control secondary" onclick="toggleSession()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <rect x="6" y="6" width="12" height="12" stroke-width="2"/>
+                    </svg>
+                    <span>Stop Session</span>
+                </button>
+                <button class="btn-control secondary" onclick="viewHistory()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke-width="2"/>
+                    </svg>
+                    <span>View History</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Shot Summary Modal -->
+        <div id="shotModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="shotModalTitle" hidden>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="shotModalTitle">Shot Analysis</h2>
+                    <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body" id="shotModalBody">
+                    <!-- Populated by JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="closeModal()">Close</button>
+                    <button class="btn-primary" onclick="nextShot()">Next Shot</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MediaPipe Libraries -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+    
+    <!-- Application Scripts (correct paths) -->
+    <script defer src="../static/JS/config.js"></script>
+    <script defer src="../static/JS/pose-analyzer.js"></script>
+    <script defer src="../static/JS/ui-controller.js"></script>
+    <script defer src="../static/JS/app.js"></script>
+</body>
+</html>

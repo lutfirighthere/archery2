@@ -1,0 +1,93 @@
+<!-- features.html -->
+<!-- References: :contentReference[oaicite:2]{index=2} :contentReference[oaicite:3]{index=3} :contentReference[oaicite:4]{index=4} :contentReference[oaicite:5]{index=5} :contentReference[oaicite:6]{index=6} -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OneShot.pro — Features</title>
+  <link rel="stylesheet" href="../static/CSS/site.css"/>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo-section">
+        <h1 class="logo">OneShot.pro</h1>
+        <span class="tagline">Train Like You Only Got One Shot</span>
+      </div>
+      <nav class="nav">
+        <a href="../HTML/home.html" class="nav-link active">Home</a>
+        <a href="../HTML/features.html" class="nav-link">Features</a>
+        <a href="../HTML/pricing.html" class="nav-link">Pricing</a>
+        <a href="../HTML/coaches.html" class="nav-link">Coaches</a>
+        <a href="../HTML/login.html" class="btn-login">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section">
+      <h2 class="page-title">Everything You Need To Level Up</h2>
+      <p class="page-subtitle">Built with MediaPipe Pose and a modern UI for clean, actionable coaching.</p>
+
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>Real-Time Pose Analysis</h3>
+          <p>On-device detection of 33 landmarks with smooth tracking.</p>
+          <ul class="feature-list">
+            <li>Shoulder Level (≤ 10°)</li>
+            <li>Bow Arm Extension (~175° ± 15°)</li>
+            <li>Draw Alignment (≤ 15°)</li>
+            <li>Head Position (≤ 12°)</li>
+            <li>Spine Alignment (≤ 12°)</li>
+            <li>Anchor Point (ratio ≤ 0.25)</li>
+          </ul>
+        </div>
+        <div class="feature">
+          <h3>Instant Feedback</h3>
+          <p>Prioritized tips, status bar, and optional text-to-speech prompts.</p>
+          <ul class="feature-list">
+            <li>Shot modal with metrics & score</li>
+            <li>Pass/Fail checks per metric</li>
+            <li>Visual overlays: skeleton, anchor ring</li>
+          </ul>
+        </div>
+        <div class="feature">
+          <h3>Session Tracking</h3>
+          <p>Per-shot history, averages, and common error summaries.</p>
+          <ul class="feature-list">
+            <li>Free tier: 5 shots per session</li>
+            <li>Pro & Club: unlimited shots</li>
+            <li>Upgrade prompt when limits reached</li>
+          </ul>
+        </div>
+        <div class="feature">
+          <h3>Future-Ready</h3>
+          <p>APIs for sessions, shots, analytics, coaches, and clubs.</p>
+          <ul class="feature-list">
+            <li>JWT auth endpoints</li>
+            <li>Progress analytics (week/month/year)</li>
+            <li>Coach & Club dashboards</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cta-bar">
+        <a class="btn-primary" href="../HTML/index.html">Try The Live Demo</a>
+        <a class="btn-secondary" href="../HTML/pricing.html">View Pricing</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© 2025 OneShot.pro</span>
+      <nav class="footer-nav">
+        <a href="../HTML/pricing.html">Pricing</a>
+        <a href="../HTML/coaches.html">Coaches</a>
+        <a href="../HTML/home.html">Home</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
